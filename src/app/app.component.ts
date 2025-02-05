@@ -13,18 +13,20 @@ import { Employee } from './models/employee.model';
 export class AppComponent implements AfterViewInit {
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<Employee>();
+  originalData: Employee[] = [];
+  lastSortedColumn: string | null = null;
+  lastSortDirection: string = '';
+  private isResetting = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Colonnes à exclure du tri
   nonSortableColumns = new Set([
     'imageUrl', 'isDeleting', 'position', 'department', 
-    'adress', 'address', 'firstName', 'email', 'name', 'lastName','contactNumber'
+    'adress', 'address', 'firstName', 'email', 'name', 'lastName', 'contactNumber'
   ]);
 
-  // Colonnes où les nombres sont triés en premier
-  numericFirstColumns = new Set(['age', 'dob', 'salary', 'contactNumber']);
+  numericFirstColumns = new Set(['age', 'dob', 'salary']);
 
   constructor(private employeeService: EmployeeService) {}
 
@@ -32,20 +34,53 @@ export class AppComponent implements AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    // Empêcher le tri décroissant
     this.sort.sortChange.subscribe(() => {
-      if (this.sort.direction === 'desc') {
-        this.sort.direction = 'asc'; // Toujours revenir à un tri croissant
+      if (this.isResetting) {
+        this.isResetting = false;
+        return;
       }
+
+      if (this.sort.active === this.lastSortedColumn) {
+        if (this.lastSortDirection === 'asc' || this.lastSortDirection === '') {
+          this.resetToOriginalState();
+        } else {
+          this.setSortDirection('asc');
+        }
+      } else {
+        this.setSortDirection('asc');
+      }
+
+      this.updateLastSortState();
     });
 
     this.loadEmployees();
+  }
+
+  private resetToOriginalState(): void {
+    this.isResetting = true;
+    this.dataSource.data = [...this.originalData];
+    this.sort.direction = '';
+    this.sort.active = '';
+    this.dataSource.sort = this.sort;
+    this.lastSortedColumn = null;
+    this.lastSortDirection = '';
+  }
+
+  private setSortDirection(direction: 'asc' | 'desc'): void {
+    this.sort.direction = direction;
+    this.dataSource.sort = this.sort;
+  }
+
+  private updateLastSortState(): void {
+    this.lastSortedColumn = this.sort.active;
+    this.lastSortDirection = this.sort.direction;
   }
 
   loadEmployees(): void {
     this.employeeService.getEmployees().subscribe({
       next: (data) => {
         this.displayedColumns = ['numero', ...this.getUniqueColumns(data)];
+        this.originalData = [...data];
         this.dataSource.data = data;
         this.dataSource.sortingDataAccessor = this.sortingDataAccessor.bind(this);
       },
@@ -67,35 +102,26 @@ export class AppComponent implements AfterViewInit {
 
   sortingDataAccessor(item: any, property: string): any {
     const value = item[property];
-    
-    // Vérifier si la valeur est "Non renseigné", null, ou vide, et la placer à la fin dans le tri croissant
     const isNonRenseigne = value === 'Non renseigné' || value === null || value === undefined || value === '';
     
     if (isNonRenseigne) {
-      return Number.POSITIVE_INFINITY;  // Placer à la fin du tri croissant
+      return Number.POSITIVE_INFINITY;
     }
   
-    // Vérifier si la colonne est exclue du tri
     if (this.nonSortableColumns.has(property)) {
-      return null;  // Ne pas effectuer de tri pour cette colonne
+      return null;
     }
   
-    // Si la colonne contient des nombres (par exemple age, salary), trier les nombres en premier
     if (this.numericFirstColumns.has(property)) {
       if (!isNaN(Number(value))) {
-        return Number(value);  // Retourner la valeur numérique pour un tri correct
+        return Number(value);
       } else {
-        return Number.MAX_VALUE;  // Placer les non-numériques à la fin
+        return Number.MAX_VALUE;
       }
     }
-  
-    // Par défaut, trier les valeurs de texte
+    
     return value;
   }
-  
-
-    // Colonnes de texte
-   
 
   isSortable(column: string): boolean {
     return !this.nonSortableColumns.has(column);
