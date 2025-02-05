@@ -1,0 +1,74 @@
+.table-container {
+    margin: 20px;
+    overflow-x: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    background-color: #fafafa;
+    border: 1px solid #e0e0e0;
+  }
+  
+  table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+  }
+  
+  mat-header-cell {
+    background-color: #6200ea;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    text-transform: uppercase;
+    padding: 12px;
+    border-bottom: 2px solid #d1c4e9;
+  }
+  
+  mat-cell {
+    font-size: 14px;
+    padding: 12px;
+    border-bottom: 1px solid #eeeeee;
+  }
+  
+  mat-row:nth-child(even) {
+    background-color: #f3e5f5;
+  }
+  
+  mat-row:hover {
+    background-color: #ede7f6;
+    transition: background-color 0.3s ease;
+  }
+  
+  mat-paginator {
+    background-color: #fafafa;
+    border-top: 1px solid #e0e0e0;
+    padding: 8px;
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  mat-paginator .mat-button {
+    color: #6200ea;
+  }
+  
+  /* Afficher uniquement la flèche croissante par défaut */
+  .mat-sort-header-arrow {
+    display: none; /* Masquer toutes les flèches */
+  }
+  
+  .mat-sort-header.mat-sort-header-sorted .mat-sort-header-arrow {
+    display: inline-block; /* Affiche la flèche uniquement pour les colonnes triées */
+    transform: rotate(0deg) !important; /* Oriente la flèche uniquement vers le haut (croissant) */
+  }
+  
+  @media (max-width: 768px) {
+    .table-container {
+      margin: 10px;
+    }
+  
+    mat-header-cell, mat-cell {
+      font-size: 13px;
+      padding: 8px;
+    }
+  }
+  
