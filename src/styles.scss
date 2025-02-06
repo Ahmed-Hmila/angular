@@ -1,4 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/theming';
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { 
+  height: 100%; 
+  background: #f1f5f9;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  color: #1e293b;
+}
+
+.mat-typography {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+// Correction du spinner
+.mat-progress-spinner circle, .mat-spinner circle {
+  stroke: #3b82f6;
+}
