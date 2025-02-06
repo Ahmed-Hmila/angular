@@ -1,11 +1,14 @@
+<div class="table-title">
+  <h2>List of Employees</h2>
+</div>
+
 <div class="table-container">
   <div *ngIf="dataSource.data.length === 0" class="loading-indicator">
     <mat-spinner diameter="40"></mat-spinner>
-    Chargement des données...
+    Loading data...
   </div>
 
   <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2">
-
     <!-- Colonne Numéro -->
     <ng-container matColumnDef="numero">
       <th mat-header-cell *matHeaderCellDef> # </th>

@@ -11,6 +11,9 @@ import { Employee } from './models/employee.model';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements AfterViewInit {
+  title(title: any) {
+    throw new Error('Method not implemented.');
+  }
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<Employee>();
   originalData: Employee[] = [];
